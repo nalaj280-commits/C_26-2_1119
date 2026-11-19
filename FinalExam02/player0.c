@@ -786,6 +786,7 @@ Command player0_choose_command(const char *state_path)
     fclose(file);
     if (!ok) return COMMAND_ATTACK_UP;
     snapshot_forecast_expiring_key(&s);
+    { Command progress; if (snapshot_endgame_progress(&s, &progress)) return progress; }
     {   /* 1대1 결판 중에는 Kite 대신 ours_choose가 판단한다(열쇠를 내려놓은 뒤에도 같은 계획으로 이어가기 위해) */
         int i, alive = 0, lone = -1;
         for (i = 0; i < PLAYER_COUNT; ++i) if (i != s.self && s.players[i].hp > 0) { ++alive; lone = i; }

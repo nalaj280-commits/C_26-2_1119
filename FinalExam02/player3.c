@@ -363,6 +363,7 @@ Command player3_choose_command(const char *state_path)
     fclose(file);
     if (!ok) return COMMAND_ATTACK_UP;
     snapshot_forecast_expiring_key(&b->s);
+    { Command progress; if (snapshot_endgame_progress(&b->s, &progress)) return progress; }
 
     b->self = b->s.self;
     b->me = b->s.players[b->self].pos;

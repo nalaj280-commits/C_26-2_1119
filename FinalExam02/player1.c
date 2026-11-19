@@ -47,6 +47,7 @@ Command player1_choose_command(const char* state_path)
         return COMMAND_ATTACK_UP;
 
     snapshot_forecast_expiring_key(&s);
+    { Command progress; if (snapshot_endgame_progress(&s, &progress)) return progress; }
 
     n = s.size;
     me = s.self;

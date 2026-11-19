@@ -1417,7 +1417,7 @@ Command player5_choose_command(const char *state_path)
                     eta=p5_steps(&map,root.players[i].pos,drop,0);
                     if(eta<nearest)nearest=eta;
                 }
-                if(nearest>=3&&nearest>best_enemy){best_enemy=nearest;best_dir=d;}
+                if(nearest>=4&&nearest>best_enemy){best_enemy=nearest;best_dir=d;}
             }
             if(best_dir>=0)p5x_forced=COMMAND_DROP_UP+best_dir;
         }

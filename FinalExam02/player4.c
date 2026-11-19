@@ -40,6 +40,7 @@ Command player4_choose_command(const char *state_path)
     }
     fclose(fp);
     snapshot_forecast_expiring_key(&s);
+    { Command progress; if (snapshot_endgame_progress(&s, &progress)) return progress; }
 
     if (s.size < 3 || s.size > MAP_MAX || s.self < 0 || s.self >= PLAYER_COUNT)
         return COMMAND_ATTACK_UP;

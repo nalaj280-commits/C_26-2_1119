@@ -88,6 +88,7 @@ Command player2_choose_command(const char *state_path)
     fclose(file);
     if (!i) return COMMAND_ATTACK_UP;
     snapshot_forecast_expiring_key(&s);
+    { Command progress; if (snapshot_endgame_progress(&s, &progress)) return progress; }
 
     srand((unsigned)(s.turn * 1315423911u + s.self * 2654435761u + 101u));
 
