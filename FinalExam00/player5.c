@@ -15,7 +15,7 @@ static Command p5_model(const Snapshot *state)
     int used[MAP_MAX][MAP_MAX] = {0};
     double route[MAP_MAX][MAP_MAX], threat[MAP_MAX][MAP_MAX];
     Position queue[MAP_MAX * MAP_MAX], predicted[PLAYER_COUNT], me, goal;
-    int i, j, k, d, x, y, nx, ny, head, tail, carrying, owner;
+    int i, j, k, d, x, y, nx, ny, head, tail, carrying, owner; 
     int target = -1, mode = 0, rival = 9999, eta, nearest = 9999;
     int ax, ay, bx, by, hit, future_hit, steps, choice, count;
     double best, value, cost, risk, attack, conflict, pickup_risk, stationary;
