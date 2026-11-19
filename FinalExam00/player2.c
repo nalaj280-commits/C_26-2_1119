@@ -538,7 +538,7 @@ Command player2_choose_command(const char *state_path)
                 적이 이미 열쇠 바로 앞(1칸 이내)에 도달했고 나는 열쇠에서 5칸 이상 멀리 떨어져 있으며,
                 내가 탈출구 입구 쪽에 더 가까운 위치(myExitDist < distExit[key])에 있다면:
                 뒤늦게 열쇠로 달려가 허탕 치는 대신, 적이 열쇠를 들고 내려올 관문/탈출구 입구에 매복한다! */
-        if (minEnemyKeyDist <= 1 && myKeyDist >= 5 && closestKeyEnemy >= 0 &&
+        if (s.players[me].deaths < 2 && minEnemyKeyDist <= 1 && myKeyDist >= 5 && closestKeyEnemy >= 0 &&
             myExitDist + 1 < distExit[s.key.y][s.key.x]) {
             int refX = s.players[closestKeyEnemy].pos.x;
             ambushMode = 1;
@@ -599,7 +599,7 @@ Command player2_choose_command(const char *state_path)
                 열쇠 소지자가 탈출구에서 4칸 이내(관문 통과 직후 또는 탈출구 접근 중)이고
                 내가 탈출구 입구에 더 가깝거나 같다면(myDistToExit <= carrierDistToExit),
                 탈출구 입구(distExit == 1)에서 매복하여 기습 타격한다! */
-        else if (carrierDistToExit <= 4 && myDistToExit <= carrierDistToExit) {
+        else if (s.players[me].deaths < 2 && carrierDistToExit <= 4 && myDistToExit <= carrierDistToExit) {
             ambushMode = 1;
             for (d = 0; d < 4; ++d) {
                 x = s.exit.x + dx[d]; y = s.exit.y + dy[d];

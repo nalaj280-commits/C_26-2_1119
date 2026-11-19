@@ -473,8 +473,10 @@ Command player3_choose_command(const char *state_path)
                     int carr;
                     if (!b->act[e] || st.hp[e] >= b->s.players[e].hp) continue;
                     carr = b->carrier == e;
-                    v += carr ? 65.0 : 12.0;
-                    if (st.hp[e] <= 0) v += carr ? 130.0 : 18.0;
+                    /* 전투 자체보다 열쇠 회수와 탈출을 보상한다. 비소유자에게
+                       주는 피해 가치를 낮춰 제3자만 돕는 교전을 줄인다. */
+                    v += carr ? 80.0 : 6.0;
+                    if (st.hp[e] <= 0) v += carr ? 170.0 : 8.0;
                 }
             }
             total += v;

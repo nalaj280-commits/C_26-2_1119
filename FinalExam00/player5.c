@@ -1212,7 +1212,9 @@ static double p5_evaluate(P5Map *map,const P5Node *node,const Snapshot *root,uns
             if(i==s->self||s->players[i].hp<=0)continue;
             eta=p5_pickup_steps(map,s,s->players[i].pos);if(eta<rival)rival=eta;
         }
-        if(me->hp>0&&steps<rival&&steps<=1)value+=650;
+        /* 확실히 앞선 열쇠 경쟁은 안전한 2등보다 우승으로 연결될 가능성이
+           높다. 한 턴 안에 선점할 수 있으면 적극적으로 유지한다. */
+        if(me->hp>0&&steps<rival&&steps<=1)value+=1100;
         for(d=0;d<4;++d){Position p={s->key.x+p5_dx[d],s->key.y+p5_dy[d]};int trip;
             if(!p5_inside(s,p)||s->terrain[p.y][p.x]=='#'||s->terrain[p.y][p.x]=='E')continue;
             trip=3*p5_steps(map,me->pos,p,0)+p5_steps(map,p,s->exit,1);if(trip<best_trip)best_trip=trip;
@@ -1220,8 +1222,15 @@ static double p5_evaluate(P5Map *map,const P5Node *node,const Snapshot *root,uns
         value-=8*best_trip;
     }else{
         Position carrier=s->players[s->key_owner].pos;
-        value-=1050+30*p5_steps(map,me->pos,carrier,0);
-        value+=30*p5_steps(map,carrier,s->exit,1)-130*s->players[s->key_owner].hp;
+        {
+            int exit_steps=p5_steps(map,carrier,s->exit,1);
+            value-=1050+30*p5_steps(map,me->pos,carrier,0);
+            value+=30*exit_steps-130*s->players[s->key_owner].hp;
+            /* 탈출 직전의 소유자는 일반 추격보다 훨씬 긴급하다. */
+            if(exit_steps<=1)value-=5000;
+            else if(exit_steps<=3)value-=2500;
+            else if(exit_steps<=5)value-=1200;
+        }
     }
     if(blockers&&me->hp>0){
         int closest=1000;
@@ -1486,7 +1495,16 @@ Command player5_choose_command(const char *state_path)
                 if(!viable)continue;
                 for(model=0;model<P5_MODELS;++model){cumulative+=mass[model];worst=ordered[model];if(cumulative>=total*0.2)break;}
                 if(!reset&&fatal[action]&&root.players[root.self].hp==1&&worst>-6500)worst=-6500;
-                value=0.65*(mean/total)+0.35*worst-risk[action]*(reset?0.12:1.0)-loop_cost[action]+plan_bonus[action];
+                {
+                    double worst_weight=root.players[root.self].hp<=1?0.35:0.18;
+                    double risk_scale=reset?0.12:(root.players[root.self].hp<=1?1.0:0.55);
+                    /* HP 2의 집기는 한 번 피해를 받아도 생존하므로 우승 기회를
+                       위해 추가 위험을 허용한다. */
+                    if(action>=8&&action<12&&root.players[root.self].hp==MAX_HP)
+                        risk_scale*=0.65;
+                    value=(1.0-worst_weight)*(mean/total)+worst_weight*worst-
+                        risk[action]*risk_scale-loop_cost[action]+plan_bonus[action];
+                }
                 if(value>best){best=value;result=(Command)action;}
             }
         }

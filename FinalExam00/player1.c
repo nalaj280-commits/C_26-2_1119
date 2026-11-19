@@ -716,7 +716,9 @@ Command player1_choose_command(const char* state_path)
                 }
 
                 if (kind == 2) {
-                    score += contested ? 90.0 : 220.0;
+                    /* 집은 뒤에야 공격 성과가 순위로 이어진다. HP 2에서는
+                       경쟁 집기도 감수하되, HP 1에서는 취소 즉사를 피한다. */
+                    score += contested ? (myhp >= 2 ? 145.0 : 25.0) : 320.0;
                 }
 
                 {
@@ -804,8 +806,13 @@ Command player1_choose_command(const char* state_path)
                         if (hitNow) {
                             base = (ehp[j] <= 1) ? 150.0 : 105.0;
 
-                            if (j == holder)
-                                base += (ehp[j] <= 1) ? 420.0 : 360.0;
+                            if (j == holder) {
+                                base += (ehp[j] <= 1) ? 520.0 : 390.0;
+                                /* 소유자를 쓰러뜨린 직후 떨어질 열쇠를 회수하기
+                                   쉬운 거리의 공격을 우선한다. */
+                                if (P1_CHEB(px, py, ex[j], ey[j]) <= 1)
+                                    base += (ehp[j] <= 1) ? 180.0 : 60.0;
+                            }
                             else if (mode == 1 && keyFloor && keyValid &&
                                 dK[ey[j]][ex[j]] < 99999) {
                                 base += (dK[ey[j]][ex[j]] <= 2) ? 95.0 : 45.0;

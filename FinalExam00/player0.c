@@ -322,7 +322,11 @@ static Command ours_choose(const Snapshot *sp)
             if (s.key_owner != -1 || p.x + dx[dir] != s.key.x || p.y + dy[dir] != s.key.y) continue;
             for (j = 0; j < PLAYER_COUNT; ++j)
                 if (j != me && s.players[j].hp > 0 && abs(s.players[j].pos.x - s.key.x) + abs(s.players[j].pos.y - s.key.y) == 1) ++contest;
-            score += contest ? P0_CONTEST : 2000; /* 경쟁 줍기도 시도: 실패해도 피해 1, 성공하면 열쇠 (HP 1에서 막으면 승률이 63%로 폭락해 그대로 둔다) */
+            /* HP 2에서는 한 번의 취소 피해를 감수하고 경쟁한다. HP 1에서
+               둘 이상과 동시에 집으면 즉사할 가능성이 높으므로 공격/이동 후보가 이기게 한다. */
+            if (!contest) score += 2000;
+            else if (s.players[me].hp == MAX_HP) score += P0_CONTEST - 80 * (contest - 1);
+            else score -= 250 + 100 * (contest - 1);
         } else {
             /* 공격: 각 적이 갈 수 있는 위치(제자리+이동 4곳) 중 부채꼴에 들어가는 비율만큼 가치 */
             for (j = 0; j < PLAYER_COUNT; ++j) {

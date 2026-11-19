@@ -528,9 +528,10 @@ Command player4_choose_command(const char *state_path)
                 if (nx < 0 || ny < 0 || nx >= s.size || ny >= s.size) continue;
                 if (s.terrain[ny][nx] == '#' || s.terrain[ny][nx] == 'E' ||
                     occupied[ny][nx] || visited[ny][nx]) continue;
-                if (attackZone[ny][nx]) continue;
+                if (attackZone[ny][nx] && s.players[s.self].hp <= 1) continue;
                 localDanger = (int)danger[ny][nx];
-                nextCost = best + 10 + 12 * localDanger;
+                nextCost = best + 10 + 12 * localDanger +
+                           (attackZone[ny][nx] ? 75 : 0);
                 /* A contested key is a reason to stay on its safe perimeter,
                    not to race into the four pickup squares. */
                 if (contested) {
@@ -551,7 +552,8 @@ Command player4_choose_command(const char *state_path)
                 int goalCost;
                 if (gx < 0 || gy < 0 || gx >= s.size || gy >= s.size) continue;
                 if (s.terrain[gy][gx] == '#' || s.terrain[gy][gx] == 'E' ||
-                    occupied[gy][gx] || attackZone[gy][gx]) continue;
+                    occupied[gy][gx] ||
+                    (attackZone[gy][gx] && s.players[s.self].hp <= 1)) continue;
                 if (pathCost[gy][gx] >= INF || firstMove[gy][gx] < 0) continue;
                 goalCost = pathCost[gy][gx] + 12 * (int)danger[gy][gx];
                 if (goalCost < bestGoalCost) {
@@ -574,7 +576,7 @@ Command player4_choose_command(const char *state_path)
                     int lineGap, score, first;
                     if (pathCost[y][x] >= INF || occupied[y][x] ||
                         s.terrain[y][x] == '#' || s.terrain[y][x] == 'E' ||
-                        attackZone[y][x]) continue;
+                        (attackZone[y][x] && s.players[s.self].hp <= 1)) continue;
                     keyDistance = abs(x - s.key.x) + abs(y - s.key.y);
                     if (keyDistance < 2 || keyDistance > 6) continue;
                     exitDistance = abs(x - s.exit.x) + abs(y - s.exit.y);
@@ -611,7 +613,8 @@ Command player4_choose_command(const char *state_path)
                 int minEnemy = 1000, score;
                 if (nx < 0 || ny < 0 || nx >= s.size || ny >= s.size) continue;
                 if (s.terrain[ny][nx] == '#' || s.terrain[ny][nx] == 'E' ||
-                    occupied[ny][nx] || attackZone[ny][nx]) continue;
+                    occupied[ny][nx] ||
+                    (attackZone[ny][nx] && s.players[s.self].hp <= 1)) continue;
                 for (i = 0; i < PLAYER_COUNT; ++i) {
                     int md;
                     if (!active[i]) continue;
