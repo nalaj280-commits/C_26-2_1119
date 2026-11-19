@@ -3,6 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="FinalExam01/FinalExam01.vcxproj" Id="1cd4e74c-9216-4bce-84c2-e130aa25696e" />
+  <Project Path="FinalExamGameCore/FinalExamGameCore.vcxproj" Id="1fbab031-488f-4b66-9871-829f5d72e1f6" />
   <Project Path="FinalExam00/FinalExam00.vcxproj" Id="ff521ecd-f7e9-4a78-bfae-ffb86d844914" />
 </Solution>
